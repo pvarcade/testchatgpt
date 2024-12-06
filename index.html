@@ -74,7 +74,7 @@
     <script>
         async function fetchAndDisplaySchedule(url, containerId) {
             try {
-                // Ajoutez le proxy pour contourner les restrictions CORS
+                // Ajoutez un proxy pour contourner les restrictions CORS
                 const corsProxy = "https://cors-anywhere.herokuapp.com/";
                 const response = await fetch(corsProxy + url);
                 const text = await response.text();
@@ -83,6 +83,7 @@
                 const events = comp.getAllSubcomponents("vevent");
 
                 const container = document.getElementById(containerId);
+                container.innerHTML = ""; // Efface les anciens événements pour rafraîchir
 
                 events.forEach(event => {
                     const summary = event.getFirstPropertyValue("summary");
