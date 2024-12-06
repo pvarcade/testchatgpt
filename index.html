@@ -74,38 +74,33 @@
     <script>
         async function fetchAndDisplaySchedule(url, containerId) {
             try {
-                // Ajoutez un proxy pour contourner les restrictions CORS
-                const corsProxy = "https://cors-anywhere.herokuapp.com/";
-                const response = await fetch(corsProxy + url);
+                const response = await fetch(url);
                 const text = await response.text();
                 const jcalData = ICAL.parse(text);
                 const comp = new ICAL.Component(jcalData);
                 const events = comp.getAllSubcomponents("vevent");
 
                 const container = document.getElementById(containerId);
-                container.innerHTML = ""; // Efface les anciens événements pour rafraîchir
 
                 events.forEach(event => {
                     const summary = event.getFirstPropertyValue("summary");
                     const location = event.getFirstPropertyValue("location");
                     const start = new Date(event.getFirstPropertyValue("dtstart").toJSDate());
                     const end = new Date(event.getFirstPropertyValue("dtend").toJSDate());
-                    const description = event.getFirstPropertyValue("description") || "N/A";
+                    const organizer = event.getFirstPropertyValue("organizer") || "N/A";
 
                     const eventDiv = document.createElement("div");
                     eventDiv.className = "event";
                     eventDiv.innerHTML = `
                         <strong>${start.toLocaleDateString("fr-FR")} de ${start.toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' })} à ${end.toLocaleTimeString("fr-FR", { hour: '2-digit', minute: '2-digit' })}</strong>
                         <p><b>${summary}</b></p>
-                        <p>Description : ${description}</p>
+                        <p>Intervenant : ${organizer}</p>
                         <p>Lieu : ${location || "Non spécifié"}</p>
                     `;
                     container.appendChild(eventDiv);
                 });
             } catch (error) {
                 console.error("Erreur lors de la récupération de l'emploi du temps :", error);
-                const container = document.getElementById(containerId);
-                container.innerHTML = `<p style="color: red;">Impossible de charger l'emploi du temps.</p>`;
             }
         }
 
